@@ -34,8 +34,8 @@ Make("Five", "Five") # Throws an error
 
 ## Take
 
-`Take(names:*, callback:Function)` gives you back values registered with `Make()`.
-Once the requested names have all been registered, your callback function is called with the values in order.
+`Take(names:Array, callback:Function)` gives you back values registered with `Make()`.
+Once the requested names have all been registered, your callback function is called with the named values in order.
 
 ```coffee
 Take ["ScaryStory", "UniversalAnswer"], (ScaryStory, UniversalAnswer)->
@@ -49,23 +49,36 @@ then the value will just be the same as the name. It's idiomatic to place these 
 
 
 ```coffee
+
+# Only one name? Use a string instead of an array!
+Take "UniversalAnswer", (UniversalAnswer)->
+  console.log "I'm #{UniversalAnswer} years old!" # Logs: "I'm 42 years old!"
+
+# Up above, Make("Ready") was called with no value, so we can just omit it from the function arguments. It's like a one-time event.
 Take "Ready", ()->
   
-  # You can call Take() before calling Make(). You can also name the callback arguments whatever you want.
-  Take "TheFuture", (tehFuture)->
-    tehFuture()
+  # You can name the callback arguments whatever you want. This gives nice "import as" behaviour.
+  Take "TheFuture", (fuuuuture)->
+    fuuuuture() # Logs: "We're living in the future!"
   
+  # You can call Take() before calling Make()
   Make "TheFuture", ()->
     console.log("We're living in the future!")
 ```
 
-Lastly, out-of-the-box, we listen for a bunch of standard events, and call Make() when they fire. That way, you can use Take() to wait for common events like the page being loaded, or the very first mouse click (possibly useful for WebAudioAPI, or debugging). The current events we wrap are `beforeunload`, `click`, `load`, `unload`.
-
+Lastly, out-of-the-box, we listen for a bunch of standard events on the `window`, and call Make() when they fire. That way, you can use Take() to wait for common events like the page being loaded, or the very first mouse click (possibly useful for WebAudioAPI, or debugging).
 
 ```coffee
 Take "load", ()->
   alert("The page has finished loading. Aren't you glad I told you?")
 ```
+
+The current events we wrap are:
+
+* beforeunload
+* click
+* load
+* unload
 
 ## More examples, please!
 
