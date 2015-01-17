@@ -1,0 +1,15 @@
+{
+  "name": "Take & Make",
+  "description": "Just the right amount of dependency resolution service™",
+  "authors": [
+    "Ivan Reese <ivan@cdiginc.com>"
+  ],
+  "main": [
+    "dist/take-and-make.coffee",
+  ],
+  "ignore": [
+    "**/.*"
+  ],
+  "license": "MIT",
+  "private": true
+}
