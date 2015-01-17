@@ -138,7 +138,7 @@ Take "B", (B)->
 # If you do this, Take("A") and Take("B") will never resolve.
 ```
 
-Also, **Take & Make** work asynchronously by design. That means they don not work with Angular 1.x's module/DI system (without gross workarounds). Here's the workaround I recommend: Don't use Angular. If you have to use Angular, then just.. maybe.. copy-paste stuff from whatever thing you want to Take into Angular modules. Serves you right for using Angular, *punk*. Alternatively, you can wrap whatever you're getting back from Take() in a promise. That'll play nice with Angular.
+Also, **Take & Make** work asynchronously by design. That means *they donut work* with Angular 1.x's module/DI system (without gross workarounds). Here's the workaround I recommend: Don't use Angular. If you have to use Angular, then just.. maybe.. copy-paste stuff from whatever thing you want to Take into Angular modules. Serves you right for using Angular, *punk*. Alternatively, you can wrap whatever you're getting back from Take() in a promise. That'll play nice with Angular.
 
 
 ## Secrets for Powers Users
