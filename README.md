@@ -1,5 +1,11 @@
 # Take & Make
 
+## Quick Start
+
+Take & Make are included in [cdFoundation](https://github.com/cdig/cd-foundation). The two functions `Take()` and `Make()` are exposed as globals, so they should work anywhere. Make sure they're loaded before anything that uses them.
+
+## Motivation
+
 Somewhere in the dense thicket between module systems, dependency trees, injectors, resolvers, service discovery (whatever the heck that is), and grossly abusing events for load-time notification, you'll find this duo of tools. They're wonderful, with only the slightest whiff of glue.
 
 ## Make
@@ -13,7 +19,7 @@ Make "ScaryStory", (subject)->
   return "Once upon a time, #{subject} walked into the woods. #{subject} was eaten by a giant spider. The end. (OR IS IT?)"
 ```
 
-The value can be of any type, and is optional. If you don't give a value, you're registering *the fact something happened*.
+The value can be of any type, and is optional. If you don't give a value, you're registering *the fact that something happened*.
 
 ```coffee
 Make("Ready")
