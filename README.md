@@ -4,7 +4,7 @@ Somewhere in the dense thicket between module systems, dependency trees, injecto
 
 ## Make
 
-`Make(name:String, value:*)` registers a value for a name.
+`Make(name:String, value:*)` **registers** a **value** for a **name**.
  
 ```coffee
 Make("UniversalAnswer", 42)
@@ -28,9 +28,8 @@ Make("Five", "Five") # Throws an error
 
 ## Take
 
-`Take(names:*, callback:Function)` is what you use to get back values that were registered with Make.
-When you call `Take()`, it waits until `Make()` has been called for each of the names you request.
-Once those values have all been registered, your callback function is called with the values, in order.
+`Take(names:*, callback:Function)` gives you back values registered with `Make()`.
+Once the requested names have all been registered, your callback function is called with the values in order.
 
 ```coffee
 Take ["ScaryStory", "UniversalAnswer"], (ScaryStory, UniversalAnswer)->
