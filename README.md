@@ -19,7 +19,7 @@ Make "ScaryStory", (subject)->
   return "Once upon a time, #{subject} walked into the woods. #{subject} was eaten by a giant spider. The end. (OR IS IT?)"
 ```
 
-The value can be of any type, and is optional. If you don't give a value, you're registering *the fact that something happened*. We call this a "one-time event".
+The value can be of any type, and is optional. If you don't give a value, you're registering *the fact that something happened*. We call this a **one-time event**.
 
 ```coffee
 Make("Ready")
