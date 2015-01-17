@@ -142,5 +142,11 @@ Take "B", (B)->
 Also, **Take & Make** work asynchronously by design. That means they don not work with Angular 1.x's module/DI system (without gross workarounds). Here's the workaround I recommend: Don't use Angular. If you have to use Angular, then just.. maybe.. copy-paste stuff from whatever thing you want to Take into Angular modules. Serves you right for using Angular, *punk*. Alternatively, you can wrap whatever you're getting back from Take() in a promise. That'll play nice with Angular.
 
 
+## Secrets for Powers Users
+
+Having trouble getting a Take() to resolve? Getting lost in the dependency forest? We've got the debugging tool you need!
+
+Open your browser console, and run `DebugTakeMake()`. It will return an object with all of the unresolved names as properties, and how many different Take() calls are waiting on them as values. Very, very helpful.
+
 ## License
 Copyright (c) 2014-2015 CD Industrial Group Inc., released under MIT license.
