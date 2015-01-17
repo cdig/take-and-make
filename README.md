@@ -6,7 +6,7 @@ Take & Make are included in [cdFoundation](https://github.com/cdig/cd-foundation
 
 ## Motivation
 
-Somewhere in the dense thicket between module systems, dependency trees, injectors, resolvers, service discovery (whatever the heck that is), and grossly abusing events for load-time notification, you'll find this duo of tools. They're wonderful, with only the slightest whiff of glue.
+Somewhere in the dense thicket between module systems, dependency trees, injectors, resolvers, service discovery, and grossly abusing events because you don't have any of the former, you'll find this duo of tools. They're wonderful, with only the slightest whiff of glue.
 
 ## Make
 
