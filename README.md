@@ -19,7 +19,7 @@ Make "ScaryStory", (subject)->
   return "Once upon a time, #{subject} walked into the woods. #{subject} was eaten by a giant spider. The end. (OR IS IT?)"
 ```
 
-The value can be of any type, and is optional. If you don't give a value, you're registering *the fact that something happened*.
+The value can be of any type, and is optional. If you don't give a value, you're registering *the fact that something happened*. We call this a "one-time event".
 
 ```coffee
 Make("Ready")
@@ -44,17 +44,16 @@ Take ["ScaryStory", "UniversalAnswer"], (ScaryStory, UniversalAnswer)->
 ```
 
 Pro tip: if there's only one name, you can use a string instead of an array.
-Oh, and if the name you're requesting doesn't have a value (because values are optional when calling Make, remember),
-then the value will just be the same as the name. It's idiomatic to place these *event-like* names last, and just omit them from the function parameters.
-
+Oh, and if the name you're requesting is a *one-time event*,
+then the value will just be the same as the name. It's idiomatic to place these names last in the array, and then just omit them from the function parameters.
 
 ```coffee
 
-# Only one name? Use a string instead of an array!
-Take "UniversalAnswer", (UniversalAnswer)->
-  console.log "I'm #{UniversalAnswer} years old!" # Logs: "I'm 42 years old!"
+# "Ready" is a one-time event, so we can just omit it from the function arguments.
+Take ["UniversalAnswer", "Ready"], (UniversalAnswer)->
+  console.log("I'm #{UniversalAnswer} years old and I'm ready for action!") # Logs: "I'm 42 years old and I'm ready for action!"
 
-# Up above, Make("Ready") was called with no value, so we can just omit it from the function arguments. It's like a one-time event.
+# Only one name? Use a string instead of an array!
 Take "Ready", ()->
   
   # You can name the callback arguments whatever you want. This gives nice "import as" behaviour.
