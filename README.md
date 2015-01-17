@@ -1,6 +1,6 @@
 # Take & Make
 
-Somewhere in the dense thicket between module systems, dependency trees and injectors and resolvers, service discovery (whatever the heck that is), and grossly abusing events for load-time notification, you'll find this duo of tools. They're wonderful, with only the slightest whiff of glue.
+Somewhere in the dense thicket between module systems, dependency trees, injectors, resolvers, service discovery (whatever the heck that is), and grossly abusing events for load-time notification, you'll find this duo of tools. They're wonderful, with only the slightest whiff of glue.
 
 ## Make
 
