@@ -5,7 +5,7 @@
     "Ivan Reese <ivan@cdiginc.com>"
   ],
   "main": [
-    "dist/take-and-make.coffee",
+    "dist/take-and-make.coffee"
   ],
   "ignore": [
     "**/.*"
