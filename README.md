@@ -147,5 +147,13 @@ Having trouble getting a Take() to resolve? Getting lost in the dependency fores
 
 Open your browser console, and run `DebugTakeMake()`. It will return an object with all of the unresolved names as properties, and how many different Take() calls are waiting on them as values. Very, very helpful.
 
+## Future Plans
+
+Take & Make are a temporary solution.
+They're deliberately very, very simple (less than 100 lines of code). They solve the 85% of the problem that must be solved, and they avoid the 15% that'd turn them into a huge heap of code and complication.
+In the future, we'll need more advanced tools for code modularization and lazy loading and compilation and, most importantly, dead code elimination.
+Take & Make give us enough to get by on until 2016, once ES6 modules become ubiquitous. They will do just fine for our needs until then, and we can avoid the clusterfuck of AMD, RequireJS, Webpack, Angular modules, CommonJS, NPM, JSPM, etc.
+When ES6 modules are ready, it will be a largely mechanical process to upgrade to them.
+
 ## License
 Copyright (c) 2014-2015 CD Industrial Group Inc., released under MIT license.
