@@ -6,7 +6,7 @@ do ()->
     "unload"
   ]
   
-  valuesByName = {}
+  made = {}
   waitingTakers = []
   alreadyChecking = false
   
@@ -17,7 +17,7 @@ do ()->
     register(name, value) if name?
     
     # This is helpful for debugging — simply call Make() in the console to see what we've regstered
-    return valuesByName
+    return made
   
   
   window.Take = (needs, callback)->
@@ -42,7 +42,7 @@ do ()->
     unresolved = {}
     for waiting in waitingTakers
       for need in waiting.needs
-        unless valuesByName[need]?
+        unless made[need]?
           unresolved[need] ?= 0
           unresolved[need]++
     return unresolved
@@ -50,8 +50,8 @@ do ()->
 # Private
   
   register = (name, value)->
-    throw new Error("You may not Make() the same name twice: #{name}") if valuesByName[name]?
-    valuesByName[name] = value
+    throw new Error("You may not Make() the same name twice: #{name}") if made[name]?
+    made[name] = value
     checkWaitingTakers()
 
   
@@ -60,21 +60,21 @@ do ()->
     alreadyChecking = true
     
     for taker, index in waitingTakers # Depends on waitingTakers
-      if allNeedsAreMet(taker.needs) # Depends on valuesByName
+      if allNeedsAreMet(taker.needs) # Depends on made
         waitingTakers.splice(index, 1) # Mutates waitingTakers
-        notify(taker) # Calls to Make() or Take() will mutate valuesByName or waitingTakers
+        notify(taker) # Calls to Make() or Take() will mutate made or waitingTakers
         alreadyChecking = false
-        return checkWaitingTakers() # Restart: waitingTakers (and possibly valuesByName) were mutated
+        return checkWaitingTakers() # Restart: waitingTakers (and possibly made) were mutated
     
     alreadyChecking = false
   
   
   allNeedsAreMet = (needs)->
-    return needs.every (name)-> valuesByName[name]?
+    return needs.every (name)-> made[name]?
   
   
   notify = (taker)->
-    resolvedNeeds = (valuesByName[name] for name in taker.needs)
+    resolvedNeeds = (made[name] for name in taker.needs)
     taker.callback.apply(null, resolvedNeeds)
   
   
@@ -89,4 +89,3 @@ do ()->
   
   for eventName in EVENTS
     window.addEventListener(eventName, makeHandler(eventName))
-  
