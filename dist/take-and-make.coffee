@@ -13,11 +13,8 @@ do ()->
   
 # Public
   
-  window.Make = (name, value)->
-    if name?
-      throw new Error("You may not Make() the same name twice: #{name}") if valuesByName[name]?
-      valuesByName[name] = if value? then value else name
-      checkWaitingTakers()
+  window.Make = (name, value = name)->
+    register(name, value) if name?
     
     # This is helpful for debugging — simply call Make() in the console to see what we've regstered
     return valuesByName
@@ -51,7 +48,13 @@ do ()->
     return unresolved
 
 # Private
+  
+  register = (name, value)->
+    throw new Error("You may not Make() the same name twice: #{name}") if valuesByName[name]?
+    valuesByName[name] = value
+    checkWaitingTakers()
 
+  
   checkWaitingTakers = ()->
     return if alreadyChecking # Prevent recursive calls from Make()s inside notify()
     alreadyChecking = true
