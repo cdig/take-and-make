@@ -28,8 +28,8 @@ Make("Ready")
 You may only register a name once — duplicates will error.
 
 ```coffee
-Make("Five", 5)
-Make("Five", "Five") # Throws an error
+Make("Six", 6)
+Make("Six", "VI") # Throws an error
 ```
 
 ## Take
