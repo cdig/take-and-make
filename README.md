@@ -143,9 +143,20 @@ Also, **Take & Make** work asynchronously by design. That means *they donut work
 
 ## Secrets for Powers Users
 
-Having trouble getting a Take() to resolve? Getting lost in the dependency forest? We've got the debugging tool you need!
+Having trouble getting a Take() to resolve?
+Getting lost in the dependency forest?
+We've got the debugging tool you need!
 
-Open your browser console, and run `DebugTakeMake()`. It will return an object with all of the unresolved names as properties, and how many different Take() calls are waiting on them as values. Very, very helpful.
+Open your browser console, and run `DebugTakeMake()`.
+It will return an object with all of the unresolved names as properties,
+and how many different Take() calls are waiting on them as values.
+Very, very helpful.
+
+In the console, you can also just call `Make()` to see the list of all registered values,
+or `Take()` to see the list of all requested values that haven't been resolved.
+But `DebugTakeMake()` is a bit nicer to look at than `Take()`,
+so you're probably better off just sticking with that.
+
 
 ## Future Plans
 
