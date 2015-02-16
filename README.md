@@ -79,6 +79,13 @@ The current events we wrap are:
 * load
 * unload
 
+The value associated with these events is the event object. So, if you want the event info for the first click, that's available!
+
+```coffee
+Take "click", (click)->
+  alert("The page was clicked at #{click.clientX}, #{click.clientY}")
+```
+
 ## More examples, please!
 
 Dance, monkey!
