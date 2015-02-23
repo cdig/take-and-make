@@ -32,6 +32,20 @@ Make("Six", 6)
 Make("Six", "VI") # Throws an error
 ```
 
+
+### Make: Angular
+
+If we detect that you're using Angular, then calls to Make will automatically generate Angular injectables. To use these, make sure you add the `TakeAndMake` module to you Angular app.
+
+```coffee
+angular.module "MyApp", [
+  'TakeAndMake'
+]
+```
+
+Note, support for Angular is experimental, and registering injectables might only work very early on in the lifecycle of your app, while Angular is in the compile phase. We might need to disable it once the compile phase is over.
+
+
 ## Take
 
 `Take(names:Array, callback:Function)` gives you back values registered with `Make()`.
@@ -65,7 +79,10 @@ Take "Ready", ()->
     console.log("We're living in the future!")
 ```
 
-Lastly, out-of-the-box, we listen for a bunch of standard events on the `window`, and call Make() when they fire. That way, you can use Take() to wait for common events like the page being loaded, or the very first mouse click (possibly useful for WebAudioAPI, or debugging).
+
+### Take: Standard Events
+
+Out-of-the-box, we listen for a bunch of standard events on the `window`, and call Make() when they fire. That way, you can use Take() to wait for common events like the page being loaded, or the very first mouse click (possibly useful for WebAudioAPI, or debugging).
 
 ```coffee
 Take "load", ()->
@@ -85,6 +102,7 @@ The value associated with these events is the event object. So, if you want the 
 Take "click", (click)->
   alert("The page was clicked at #{click.clientX}, #{click.clientY}")
 ```
+
 
 ## More examples, please!
 
@@ -144,8 +162,6 @@ Take "B", (B)->
 
 # If you do this, Take("A") and Take("B") will never resolve.
 ```
-
-Also, **Take & Make** work asynchronously by design. That means *they donut work* with Angular 1.x's module/DI system (without gross workarounds). Here's the workaround I recommend: Don't use Angular. If you have to use Angular, then just.. maybe.. copy-paste stuff from whatever thing you want to Take into Angular modules. Serves you right for using Angular, *punk*. Alternatively, you can wrap whatever you're getting back from Take() in a promise. That'll play nice with Angular.
 
 
 ## Secrets for Powers Users

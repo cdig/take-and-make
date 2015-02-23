@@ -10,6 +10,9 @@ do ()->
   waitingTakers = []
   alreadyChecking = false
   
+  if window.angular?
+    angularModule = angular.module("TakeAndMake", [])
+  
   
 # Public
   
@@ -42,6 +45,7 @@ do ()->
   register = (name, value)->
     throw new Error("You may not Make() the same name twice: #{name}") if made[name]?
     made[name] = value
+    angularModule?.constant(name, value)
     checkWaitingTakers()
 
   
