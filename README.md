@@ -33,19 +33,6 @@ Make("Six", "VI") # Throws an error
 ```
 
 
-### Make: Angular
-
-If we detect that you're using Angular, then calls to Make will automatically generate Angular injectables. To use these, make sure you add the `TakeAndMake` module to you Angular app.
-
-```coffee
-angular.module "MyApp", [
-  'TakeAndMake'
-]
-```
-
-Note, support for Angular is experimental, and registering injectables might only work very early on in the lifecycle of your app, while Angular is in the compile phase. We might need to disable it once the compile phase is over.
-
-
 ## Take
 
 `Take(names:Array, callback:Function)` gives you back values registered with `Make()`.
@@ -80,7 +67,7 @@ Take "Ready", ()->
 ```
 
 
-### Take: Standard Events
+## Standard One-Time Events
 
 Out-of-the-box, we listen for a bunch of standard events on the `window`, and call Make() when they fire. That way, you can use Take() to wait for common events like the page being loaded, or the very first mouse click (possibly useful for WebAudioAPI, or debugging).
 
@@ -166,6 +153,8 @@ Take "B", (B)->
 
 ## Secrets for Powers Users
 
+### Debugging
+
 Having trouble getting a Take() to resolve?
 Getting lost in the dependency forest?
 We've got the debugging tool you need!
@@ -181,13 +170,34 @@ But `DebugTakeMake()` is a bit nicer to look at than `Take()`,
 so you're probably better off just sticking with that.
 
 
+### Angular
+
+If we detect that you're using Angular, then calls to Make will automatically generate Angular injectables. To use these, you need to do 2 things.
+
+First, make sure you add the `TakeAndMake` module to you Angular app.
+
+```coffee
+angular.module "MyApp", [
+  'TakeAndMake'
+]
+```
+
+Secondly, you need to manually bootstrap your app, but only after all the Make calls are done. If you do all your Make calls in the first tick of the event loop after `load`, then this should suffice:
+
+```coffee
+angular.element(document).ready ()->
+  setTimeout ()->
+    angular.bootstrap(document, ['MyApp'])
+```
+
+We can't really do anything smart to detect when all the Make calls will be done with, because that's up to your code. So, you'll just have to manually handle this part. But the benefit is totally worth it.
+
 ## Future Plans
 
 Take & Make are a temporary solution.
-They're deliberately very, very simple (less than 100 lines of code). They solve the 85% of the problem that must be solved, and they avoid the 15% that'd turn them into a huge heap of code and complication.
+They're deliberately very, very simple (~100 lines of code). They solve the 90% of the problem that must be solved, and they avoid the 10% that'd turn them into a huge heap of code and complication.
 In the future, we'll need more advanced tools for code modularization and lazy loading and compilation and, most importantly, dead code elimination.
-Take & Make give us enough to get by on until 2016, once ES6 modules become ubiquitous. They will do just fine for our needs until then, and we can avoid the clusterfuck of AMD, RequireJS, Webpack, Angular modules, CommonJS, NPM, JSPM, etc.
-When ES6 modules are ready, it will be a largely mechanical process to upgrade to them.
+Take & Make give us enough to get by on until 2016, once ES6 modules become ubiquitous. They will do just fine for our needs until then, and we can avoid the clusterfuck of AMD, RequireJS, Webpack, CommonJS, NPM, JSPM, etc.
 
 ## License
 Copyright (c) 2014-2015 CD Industrial Group Inc., released under MIT license.
