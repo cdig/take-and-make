@@ -1,7 +1,6 @@
 (function() {
   (function() {
-    var EVENTS, allNeedsAreMet, alreadyChecking, angularModule, checkWaitingTakers, eventName, i, len, made, makeHandler, notify, register, resolve, results, waitingTakers;
-    EVENTS = ["beforeunload", "click", "load", "unload"];
+    var addListener, allNeedsAreMet, alreadyChecking, angularModule, checkWaitingTakers, made, notify, register, resolve, waitingTakers;
     made = {};
     waitingTakers = [];
     alreadyChecking = false;
@@ -104,20 +103,28 @@
         return waitingTakers.push(taker);
       }
     };
-    makeHandler = function(eventName) {
+    addListener = function(eventName) {
       var handler;
-      return handler = function(eventObject) {
+      return window.addEventListener(eventName, handler = function(eventObject) {
         window.removeEventListener(eventName, handler);
         Make(eventName, eventObject);
         return void 0;
-      };
+      });
     };
-    results = [];
-    for (i = 0, len = EVENTS.length; i < len; i++) {
-      eventName = EVENTS[i];
-      results.push(window.addEventListener(eventName, makeHandler(eventName)));
+    addListener("beforeunload");
+    addListener("click");
+    addListener("unload");
+    switch (document.readyState) {
+      case "loading":
+        addListener("DOMContentLoaded");
+        return addListener("load");
+      case "interactive":
+        Make("DOMContentLoaded");
+        return addListener("load");
+      case "complete":
+        Make("DOMContentLoaded");
+        return Make("load");
     }
-    return results;
   })();
 
 }).call(this);

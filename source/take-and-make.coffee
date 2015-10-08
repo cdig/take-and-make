@@ -1,11 +1,4 @@
 do ()->
-  EVENTS = [
-    "beforeunload"
-    "click"
-    "load"
-    "unload"
-  ]
-  
   made = {}
   waitingTakers = []
   alreadyChecking = false
@@ -90,12 +83,23 @@ do ()->
   
   # EVENT WRAPPERS #################################################################################
   
-  makeHandler = (eventName)->
-    return handler = (eventObject)->
-      window.removeEventListener(eventName, handler)
-      Make(eventName, eventObject)
-      return undefined # prevent onunload from opening a popup
+  addListener = (eventName)->
+    window.addEventListener eventName, handler = (eventObject)->
+      window.removeEventListener eventName, handler
+      Make eventName, eventObject
+      return undefined # prevent unload from opening a popup
   
+  addListener "beforeunload"
+  addListener "click"
+  addListener "unload"
   
-  for eventName in EVENTS
-    window.addEventListener(eventName, makeHandler(eventName))
+  switch document.readyState
+    when "loading"
+      addListener "DOMContentLoaded"
+      addListener "load"
+    when "interactive"
+      Make "DOMContentLoaded"
+      addListener "load"
+    when "complete"
+      Make "DOMContentLoaded"
+      Make "load"
