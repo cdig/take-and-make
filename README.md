@@ -2,7 +2,7 @@
 
 ## Quick Start
 
-Take & Make are included in [cdFoundation](https://github.com/cdig/cd-foundation). The two functions `Take()` and `Make()` are exposed as globals, so they should work anywhere. Make sure they're loaded before anything that uses them.
+The two functions `Take()` and `Make()` are exposed as globals, so they should work anywhere. Make sure they're loaded before anything that uses them.
 
 ## Motivation
 
@@ -80,10 +80,11 @@ The current events we wrap are:
 
 * beforeunload
 * click
+* DOMContentLoaded
 * load
 * unload
 
-The value associated with these events is the event object. So, if you want the event info for the first click, that's available!
+The value associated with these events is the event object (whenever possible — sometimes, load and DOMContentLoaded will not have the event). So, if you want the event info for the first click, that's available!
 
 ```coffee
 Take "click", (click)->
