@@ -4,7 +4,10 @@
   "main": [
     "dist/take-and-make.js"
   ],
-  "ignore": [],
+  "ignore": [
+    "**/*",
+    "!dist/**/*"
+  ],
   "license": "MIT",
   "private": true
 }
