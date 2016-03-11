@@ -154,6 +154,12 @@ Take "B", (B)->
 
 ## Secrets for Powers Users
 
+### Sync or Async?
+
+Take is guaranteed to be asynchronous. That means when you request some things, you're guaranteed not to receive them until (no sooner than) the next turn of the event loop.
+
+Make is synchronous. That means when you provide something, it _might_ immediately trigger some faraway Take to be resolved. In that case, the Take callback will run _before_ the code immediately following your Make. Thus, if you need to do any initialization before your Make'd thing is ready-to-go, then for goodness sakes do it before you call Make.
+
 ### Debugging
 
 Having trouble getting a Take() to resolve?
