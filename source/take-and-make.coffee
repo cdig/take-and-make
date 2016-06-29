@@ -2,7 +2,7 @@ do ()->
   made = {}
   waitingTakers = []
   alreadyChecking = false
-  
+  clone = (o)-> if Object.assign? then Object.assign({}, o) else o
   
 # Public
   
@@ -10,14 +10,14 @@ do ()->
     register(name, value) if name?
     
     # This is helpful for debugging — simply call Make() in the console to see what we've regstered
-    return made
+    return clone made
   
   
   window.Take = (needs, callback)->
     resolve(needs, callback) if needs?
     
     # This is helpful for debugging — simply call Take() in the console to see what we're waiting on
-    return waitingTakers
+    return waitingTakers.slice()
   
   
   window.DebugTakeMake = ()->
