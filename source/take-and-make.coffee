@@ -18,28 +18,22 @@ do ()->
   waitingTakers = []
   alreadyChecking = false
   clone = (o)-> if Object.assign? then Object.assign({}, o) else o
-
   
-# Public
   
   Make = (name, value = name)->
     # Debug — call Make() in the console to see what we've regstered
-    if not name?
-      return clone made
+    return clone made if not name?
     
     # Synchronous register, returns value
-    else
-      return register name, value
+    register name, value
   
   
   Take = (needs, callback)->
     # Debug — call Take() in the console to see what we're waiting for
-    if not needs?
-      return waitingTakers.slice()
+    return waitingTakers.slice() if not needs?
     
     # Synchronous and asynchronous resolve, returns value or object of values
-    else
-      resolve needs, callback
+    resolve needs, callback
   
   
   DebugTakeMake = ()->
@@ -50,9 +44,7 @@ do ()->
           unresolved[need] ?= 0
           unresolved[need]++
     return unresolved
-
-
-# Private
+  
   
   register = (name, value)->
     throw new Error("You may not Make(\"\") an empty string.") if name is ""
@@ -115,15 +107,14 @@ do ()->
       o = {}
       o[n] = made[n] for n in needs
       return o
-
   
-  # EVENT WRAPPERS #################################################################################
   
   addListener = (eventName)->
     window.addEventListener eventName, handler = (eventObject)->
       window.removeEventListener eventName, handler
       Make eventName, eventObject
       return undefined # prevent unload from opening a popup
+  
   
   addListener "beforeunload"
   addListener "click"

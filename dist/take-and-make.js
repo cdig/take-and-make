@@ -29,16 +29,14 @@ DebugTakeMake = null;
     }
     if (name == null) {
       return clone(made);
-    } else {
-      return register(name, value);
     }
+    return register(name, value);
   };
   Take = function(needs, callback) {
     if (needs == null) {
       return waitingTakers.slice();
-    } else {
-      return resolve(needs, callback);
     }
+    return resolve(needs, callback);
   };
   DebugTakeMake = function() {
     var i, j, len, len1, need, ref, unresolved, waiting;

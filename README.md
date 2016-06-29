@@ -174,6 +174,21 @@ Make "Sys", Sys
 # synchronously logs "tem call"
 ```
 
+When you use Take synchronously, you can also specify multiple needs.
+In that case, the return value will be an object mapping the needed names to their values.
+Any values that haven't yet been registered will be `undefined`.
+
+```coffee
+Make "A"
+Make "B", 2
+
+result = Take ["A", "B", "C"]
+
+console.log result.A # "A"
+console.log result.B # 2
+console.log result.C # undefined
+```
+
 
 ### Debugging
 
