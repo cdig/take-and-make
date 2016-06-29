@@ -16,7 +16,7 @@ Somewhere in the dense thicket between module systems, dependency trees, injecto
 * Take & Make are no longer declared on the window
 * `"use strict";` at the top, on behalf of all code that follows
 * Debug outputs are cloned, to avoid mutation pains
-* Removed Angular Support
+* Removed Angular support
 
 
 ## Make
@@ -132,29 +132,31 @@ Take "B", (B)->
 Make is synchronous. Take can be used synchronously or asynchronously. When you give Take a callback, that callback is never called synchronously, even if all of the values it requests on have already been registered.
 
 ```coffee
-# Asynchronous Take — doesn't log yet
-Take "Me", (Me)-> console.log Me
+# Asynchronous Take, before Make — doesn't log yet
+Take "Me", (Me)-> console.log "Late"
 
-# Synchronous Take — immediately logs undefined
+# Synchronous Take, before Make — immediately logs undefined
 console.log Take "Me"
 
-# Synchronous Make — immediately causes our first Take to log "Happy"
+# Mixed Take, before Make — immediately logs undefined, callback doesn't run yet
+console.log Take "Me", (Me)-> console.log "Later"
+
+# Synchronous Make — immediately causes our two Take callbacks above to log "Late" and "Later", in that order
 Make "Me", "Happy"
 
-# Asynchronous Take — doesn't log until next turn of the event loop, to preserve asynchrony
-Take "Me", (Me)-> console.log Me
+# Asynchronous Take, after Make — to preserve asynchrony, waits until the next turn of the event loop then logs "Super Late"
+Take "Me", (Me)-> console.log "Super Late"
 
-# Synchronous Take — immediately logs "Happy"
+# Synchronous Take, after Make — immediately logs "Happy"
 console.log Take "Me"
 
-# Mixed Take — logs immediately (return value) and on the next turn of the event loop (callback)
-console.log Take "Me", (Me)-> console.log Me
+# Mixed Take, after Make — immediately logs "Happy", waits until the next tick, then logs "Finally"
+console.log Take "Me", (Me)-> console.log "Finally"
 ```
 
 When you call Make, it _might_ immediately trigger some faraway Take to be resolved. In that case, the Take callback will run _before_ the code immediately following your Make. Thus, if you need to do any initialization before your Make'd thing is ready-to-go, then for goodness sakes do that stuff before you call Make.
 
 ```coffee
-
 Take "Sys", (Sys)-> Sys()
 Take "Sys", (Sys)-> Sys.tem()
 
@@ -173,7 +175,6 @@ Make "Sys", Sys
 ```
 
 
-
 ### Debugging
 
 Having trouble getting a Take() to resolve?
@@ -190,12 +191,13 @@ or `Take()` to see the list of all requested values that haven't been resolved.
 But `DebugTakeMake()` is a bit nicer to look at than `Take()`,
 so you're probably better off just sticking with that.
 
-## Future Plans
 
+## Future Plans
 Take & Make are a temporary solution.
 They solve the 95% of the problem that must be solved, and they avoid the 5% that'd turn them into a huge heap of code and complication.
 In the future, we'll need more advanced tools for code modularization and lazy loading and compilation and, most importantly, dead code elimination.
 Take & Make give us enough to get by on until 2017, once ES6 modules become ubiquitous. They will do just fine for our needs until then, and we can avoid the clusterfuck of AMD, RequireJS, Webpack, CommonJS, NPM, JSPM, etc.
+
 
 ## License
 Copyright (c) 2014-2016 CD Industrial Group Inc., released under MIT license.
