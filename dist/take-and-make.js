@@ -1,9 +1,18 @@
 "use strict";
+var DebugTakeMake, Make, Take;
+
+if ((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefined" && Make !== null)) {
+  return;
+}
+
+Take = null;
+
+Make = null;
+
+DebugTakeMake = null;
+
 (function() {
   var addListener, allNeedsAreMet, alreadyChecking, asynchronousResolve, checkWaitingTakers, clone, made, notify, register, resolve, synchronousResolve, waitingTakers;
-  if ((window.Take != null) || (window.Make != null)) {
-    return;
-  }
   made = {};
   waitingTakers = [];
   alreadyChecking = false;
@@ -14,7 +23,7 @@
       return o;
     }
   };
-  window.Make = function(name, value) {
+  Make = function(name, value) {
     if (value == null) {
       value = name;
     }
@@ -24,14 +33,14 @@
       return register(name, value);
     }
   };
-  window.Take = function(needs, callback) {
+  Take = function(needs, callback) {
     if (needs == null) {
       return waitingTakers.slice();
     } else {
       return resolve(needs, callback);
     }
   };
-  window.DebugTakeMake = function() {
+  DebugTakeMake = function() {
     var i, j, len, len1, need, ref, unresolved, waiting;
     unresolved = {};
     for (i = 0, len = waitingTakers.length; i < len; i++) {
