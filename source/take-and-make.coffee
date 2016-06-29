@@ -44,6 +44,7 @@ do ()->
 # Private
   
   register = (name, value)->
+    throw new Error("You may not Make(\"\") an empty string.") if name is ""
     throw new Error("You may not Make() the same name twice: #{name}") if made[name]?
     made[name] = value
     checkWaitingTakers()
@@ -76,31 +77,34 @@ do ()->
   
   
   resolve = (needs, callback)->
-    isStr = typeof needs is "string"
-    
-    # Asynchronous resolve
-    if callback?
-      _needs = if isStr then [needs] else needs
-      
-      taker =
-        needs: _needs
-        callback: callback
-      
-      if allNeedsAreMet _needs
-        setTimeout ()-> # Preserve asynchrony
-          notify(taker)
-      
-      else
-        waitingTakers.push(taker)
-    
-    # Synchronous string resolve - return the matching need value or undefined
-    return made[needs] if isStr
-    
-    # Synchronous array resolve - return an object mapping need names to made values or undefinds
-    o = {}
-    o[n] = made[n] for n in needs
-    return o
+    # We always try to resolve both synchronously and asynchronously
+    asynchronousResolve needs, callback if callback?
+    synchronousResolve needs
   
+  
+  asynchronousResolve = (needs, callback)->
+    if needs is ""
+      needs = []
+    else if typeof needs is "string"
+      needs = [needs]
+    
+    taker = needs: needs, callback: callback
+    
+    if allNeedsAreMet needs
+      # Preserve asynchrony
+      setTimeout ()-> notify taker
+    else
+      waitingTakers.push taker
+  
+  
+  synchronousResolve = (needs)->
+    if typeof needs is "string"
+      return made[needs]
+    else
+      o = {}
+      o[n] = made[n] for n in needs
+      return o
+
   
   # EVENT WRAPPERS #################################################################################
   

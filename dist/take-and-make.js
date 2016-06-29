@@ -1,6 +1,6 @@
 (function() {
   (function() {
-    var addListener, allNeedsAreMet, alreadyChecking, checkWaitingTakers, clone, made, notify, register, resolve, waitingTakers;
+    var addListener, allNeedsAreMet, alreadyChecking, asynchronousResolve, checkWaitingTakers, clone, made, notify, register, resolve, synchronousResolve, waitingTakers;
     if ((window.Take != null) || (window.Make != null)) {
       return;
     }
@@ -50,6 +50,9 @@
       return unresolved;
     };
     register = function(name, value) {
+      if (name === "") {
+        throw new Error("You may not Make(\"\") an empty string.");
+      }
       if (made[name] != null) {
         throw new Error("You may not Make() the same name twice: " + name);
       }
@@ -94,31 +97,42 @@
       return taker.callback.apply(null, resolvedNeeds);
     };
     resolve = function(needs, callback) {
-      var _needs, i, isStr, len, n, o, taker;
-      isStr = typeof needs === "string";
       if (callback != null) {
-        _needs = isStr ? [needs] : needs;
-        taker = {
-          needs: _needs,
-          callback: callback
-        };
-        if (allNeedsAreMet(_needs)) {
-          setTimeout(function() {
-            return notify(taker);
-          });
-        } else {
-          waitingTakers.push(taker);
-        }
+        asynchronousResolve(needs, callback);
       }
-      if (isStr) {
+      return synchronousResolve(needs);
+    };
+    asynchronousResolve = function(needs, callback) {
+      var taker;
+      if (needs === "") {
+        needs = [];
+      } else if (typeof needs === "string") {
+        needs = [needs];
+      }
+      taker = {
+        needs: needs,
+        callback: callback
+      };
+      if (allNeedsAreMet(needs)) {
+        return setTimeout(function() {
+          return notify(taker);
+        });
+      } else {
+        return waitingTakers.push(taker);
+      }
+    };
+    synchronousResolve = function(needs) {
+      var i, len, n, o;
+      if (typeof needs === "string") {
         return made[needs];
+      } else {
+        o = {};
+        for (i = 0, len = needs.length; i < len; i++) {
+          n = needs[i];
+          o[n] = made[n];
+        }
+        return o;
       }
-      o = {};
-      for (i = 0, len = needs.length; i < len; i++) {
-        n = needs[i];
-        o[n] = made[n];
-      }
-      return o;
     };
     addListener = function(eventName) {
       var handler;
