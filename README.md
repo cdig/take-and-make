@@ -107,27 +107,7 @@ Take "click", (click)->
 ```
 
 
-## Words Of Warning
-Don't you dare create any circular dependencies. I haven't read those papers, so sod off.
-
-```coffee
-# Don't do this:
-
-Take "A", (A)->
-  Make "B", ()->
-    console.log("Derp")
-
-Take "B", (B)->
-  Make "A", ()->
-    console.log("Herp")
-
-# If you do this, Take("A") and Take("B") will never resolve.
-```
-
-
-## Secrets for Powers Users
-
-### Sync or Async?
+## Sync or Async?
 
 Make is synchronous. Take can be used synchronously or asynchronously. When you give Take a callback, that callback is never called synchronously, even if all of the values it requests on have already been registered.
 
@@ -190,8 +170,7 @@ console.log result.C # undefined
 ```
 
 
-### Debugging
-
+## Debugging
 Having trouble getting a Take() to resolve?
 Getting lost in the dependency forest?
 We've got the debugging tool you need!
@@ -205,6 +184,24 @@ In the console, you can also just call `Make()` to see the list of all registere
 or `Take()` to see the list of all requested values that haven't been resolved.
 But `DebugTakeMake()` is a bit nicer to look at than `Take()`,
 so you're probably better off just sticking with that.
+
+
+## Words Of Warning
+Don't you dare create any circular dependencies. I haven't read those papers, so sod off.
+
+```coffee
+# Don't do this:
+
+Take "A", (A)->
+  Make "B", ()->
+    console.log("Derp")
+
+Take "B", (B)->
+  Make "A", ()->
+    console.log("Herp")
+
+# If you do this, Take("A") and Take("B") will never resolve.
+```
 
 
 ## Future Plans
