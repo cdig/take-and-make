@@ -1,12 +1,9 @@
 # Take & Make
+Somewhere in the dense thicket between module systems, dependency trees, injectors, resolvers, service discovery, and grossly abusing events because you don't have any of the former, you'll find **Take & Make**. They're wonderful, with only the slightest whiff of glue.
 
 
 ## Quick Start
-The two functions `Take()` and `Make()` are exposed as globals. Make sure this code is loaded before anything that uses them.
-
-
-## Motivation
-Somewhere in the dense thicket between module systems, dependency trees, injectors, resolvers, service discovery, and grossly abusing events because you don't have any of the former, you'll find **Take & Make**. They're wonderful, with only the slightest whiff of glue.
+`Take()` and `Make()` are bare globals. Make sure this code is loaded before anything that uses them.
 
 
 ## Changes In v3
