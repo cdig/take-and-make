@@ -1,12 +1,16 @@
 (function() {
   (function() {
-    var addListener, allNeedsAreMet, alreadyChecking, angularModule, checkWaitingTakers, made, notify, register, resolve, waitingTakers;
+    var addListener, allNeedsAreMet, alreadyChecking, checkWaitingTakers, clone, made, notify, register, resolve, waitingTakers;
     made = {};
     waitingTakers = [];
     alreadyChecking = false;
-    if (window.angular != null) {
-      angularModule = angular.module("TakeAndMake", []);
-    }
+    clone = function(o) {
+      if (Object.assign != null) {
+        return Object.assign({}, o);
+      } else {
+        return o;
+      }
+    };
     window.Make = function(name, value) {
       if (value == null) {
         value = name;
@@ -14,13 +18,13 @@
       if (name != null) {
         register(name, value);
       }
-      return made;
+      return clone(made);
     };
     window.Take = function(needs, callback) {
       if (needs != null) {
         resolve(needs, callback);
       }
-      return waitingTakers;
+      return waitingTakers.slice();
     };
     window.DebugTakeMake = function() {
       var i, j, len, len1, need, ref, unresolved, waiting;
@@ -45,9 +49,6 @@
         throw new Error("You may not Make() the same name twice: " + name);
       }
       made[name] = value;
-      if (angularModule != null) {
-        angularModule.constant(name, value);
-      }
       return checkWaitingTakers();
     };
     checkWaitingTakers = function() {
