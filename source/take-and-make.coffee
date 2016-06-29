@@ -3,10 +3,16 @@
 # does not add strict on its own, but it will permit and enforce it.
 "use strict";
 
+# Bail if Take&Make is already running in this scope, or if something else is using our names
+return if Take? or Make?
+
+# We declare our globals such that they're visible everywhere within the current scope.
+# This allows for namespacing — all things within a given scope share a copy of Take & Make.
+Take = null
+Make = null
+DebugTakeMake = null
+
 do ()->
-  
-  # Bail if Take&Make is already running, or if something else is using our names
-  return if window.Take? or window.Make?
   
   made = {}
   waitingTakers = []
@@ -16,7 +22,7 @@ do ()->
   
 # Public
   
-  window.Make = (name, value = name)->
+  Make = (name, value = name)->
     # Debug — call Make() in the console to see what we've regstered
     if not name?
       return clone made
@@ -26,7 +32,7 @@ do ()->
       return register name, value
   
   
-  window.Take = (needs, callback)->
+  Take = (needs, callback)->
     # Debug — call Take() in the console to see what we're waiting for
     if not needs?
       return waitingTakers.slice()
@@ -36,7 +42,7 @@ do ()->
       resolve needs, callback
   
   
-  window.DebugTakeMake = ()->
+  DebugTakeMake = ()->
     unresolved = {}
     for waiting in waitingTakers
       for need in waiting.needs
