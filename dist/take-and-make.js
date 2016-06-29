@@ -18,16 +18,18 @@
       if (value == null) {
         value = name;
       }
-      if (name != null) {
-        register(name, value);
+      if (name == null) {
+        return clone(made);
+      } else {
+        return register(name, value);
       }
-      return clone(made);
     };
     window.Take = function(needs, callback) {
-      if (needs != null) {
-        resolve(needs, callback);
+      if (needs == null) {
+        return waitingTakers.slice();
+      } else {
+        return resolve(needs, callback);
       }
-      return waitingTakers.slice();
     };
     window.DebugTakeMake = function() {
       var i, j, len, len1, need, ref, unresolved, waiting;
@@ -52,7 +54,8 @@
         throw new Error("You may not Make() the same name twice: " + name);
       }
       made[name] = value;
-      return checkWaitingTakers();
+      checkWaitingTakers();
+      return value;
     };
     checkWaitingTakers = function() {
       var i, index, len, taker;
@@ -91,21 +94,31 @@
       return taker.callback.apply(null, resolvedNeeds);
     };
     resolve = function(needs, callback) {
-      var taker;
-      if (typeof needs === "string") {
-        needs = [needs];
+      var _needs, i, isStr, len, n, o, taker;
+      isStr = typeof needs === "string";
+      if (callback != null) {
+        _needs = isStr ? [needs] : needs;
+        taker = {
+          needs: _needs,
+          callback: callback
+        };
+        if (allNeedsAreMet(_needs)) {
+          setTimeout(function() {
+            return notify(taker);
+          });
+        } else {
+          waitingTakers.push(taker);
+        }
       }
-      taker = {
-        needs: needs,
-        callback: callback
-      };
-      if (allNeedsAreMet(needs)) {
-        return setTimeout(function() {
-          return notify(taker);
-        });
-      } else {
-        return waitingTakers.push(taker);
+      if (isStr) {
+        return made[needs];
       }
+      o = {};
+      for (i = 0, len = needs.length; i < len; i++) {
+        n = needs[i];
+        o[n] = made[n];
+      }
+      return o;
     };
     addListener = function(eventName) {
       var handler;
@@ -128,6 +141,8 @@
       case "complete":
         Make("DOMContentLoaded");
         return Make("load");
+      default:
+        throw new Error("Unknown document.readyState: " + document.readyState + ". Cannot setup Take&Make.");
     }
   })();
 

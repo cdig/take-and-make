@@ -12,17 +12,23 @@ do ()->
 # Public
   
   window.Make = (name, value = name)->
-    register(name, value) if name?
+    # Debug — call Make() in the console to see what we've regstered
+    if not name?
+      return clone made
     
-    # This is helpful for debugging — simply call Make() in the console to see what we've regstered
-    return clone made
+    # Synchronous register, returns value
+    else
+      return register name, value
   
   
   window.Take = (needs, callback)->
-    resolve(needs, callback) if needs?
+    # Debug — call Take() in the console to see what we're waiting for
+    if not needs?
+      return waitingTakers.slice()
     
-    # This is helpful for debugging — simply call Take() in the console to see what we're waiting on
-    return waitingTakers.slice()
+    # Synchronous and asynchronous resolve, returns value or object of values
+    else
+      resolve needs, callback
   
   
   window.DebugTakeMake = ()->
@@ -41,6 +47,7 @@ do ()->
     throw new Error("You may not Make() the same name twice: #{name}") if made[name]?
     made[name] = value
     checkWaitingTakers()
+    value
 
   
   checkWaitingTakers = ()->
@@ -69,17 +76,30 @@ do ()->
   
   
   resolve = (needs, callback)->
-    needs = [needs] if typeof needs is "string"
+    isStr = typeof needs is "string"
     
-    taker =
-      needs: needs
-      callback: callback
+    # Asynchronous resolve
+    if callback?
+      _needs = if isStr then [needs] else needs
+      
+      taker =
+        needs: _needs
+        callback: callback
+      
+      if allNeedsAreMet _needs
+        setTimeout ()-> # Preserve asynchrony
+          notify(taker)
+      
+      else
+        waitingTakers.push(taker)
     
-    if allNeedsAreMet(needs)
-      setTimeout ()-> # Preserve asynchrony
-        notify(taker)
-    else
-      waitingTakers.push(taker)
+    # Synchronous string resolve - return the matching need value or undefined
+    return made[needs] if isStr
+    
+    # Synchronous array resolve - return an object mapping need names to made values or undefinds
+    o = {}
+    o[n] = made[n] for n in needs
+    return o
   
   
   # EVENT WRAPPERS #################################################################################
@@ -104,3 +124,5 @@ do ()->
     when "complete"
       Make "DOMContentLoaded"
       Make "load"
+    else
+      throw new Error "Unknown document.readyState: #{document.readyState}. Cannot setup Take&Make."
