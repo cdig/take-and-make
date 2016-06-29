@@ -7,6 +7,7 @@ Somewhere in the dense thicket between module systems, dependency trees, injecto
 
 
 ## Changes In v3
+* Improved performance by batching setTimeout calls
 * Primitive support for namespacing
 * Take & Make now return helpful stuff in all use cases
 * Allow `Take ""` to work the same as `Take []`

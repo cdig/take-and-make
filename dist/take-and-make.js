@@ -6,9 +6,11 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
   Make = null;
   DebugTakeMake = null;
   (function() {
-    var addListener, allNeedsAreMet, alreadyChecking, asynchronousResolve, checkWaitingTakers, clone, made, notify, register, resolve, synchronousResolve, timeoutCount, waitingTakers;
+    var addListener, allNeedsAreMet, alreadyChecking, alreadyWaitingToNotify, asynchronousResolve, checkWaitingTakers, clone, made, notify, notifyTakers, register, resolve, synchronousResolve, takersToNotify, timeoutCount, waitingTakers;
     made = {};
     waitingTakers = [];
+    takersToNotify = [];
+    alreadyWaitingToNotify = false;
     alreadyChecking = false;
     timeoutCount = 0;
     clone = function(o) {
@@ -87,20 +89,6 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
         return made[name] != null;
       });
     };
-    notify = function(taker) {
-      var name, resolvedNeeds;
-      resolvedNeeds = (function() {
-        var i, len, ref, results;
-        ref = taker.needs;
-        results = [];
-        for (i = 0, len = ref.length; i < len; i++) {
-          name = ref[i];
-          results.push(made[name]);
-        }
-        return results;
-      })();
-      return taker.callback.apply(null, resolvedNeeds);
-    };
     resolve = function(needs, callback) {
       if (callback != null) {
         asynchronousResolve(needs, callback);
@@ -119,10 +107,12 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
         callback: callback
       };
       if (allNeedsAreMet(needs)) {
-        setTimeout(function() {
-          return notify(taker);
-        });
-        return timeoutCount++;
+        takersToNotify.push(taker);
+        if (!alreadyWaitingToNotify) {
+          alreadyWaitingToNotify = true;
+          setTimeout(notifyTakers);
+          return timeoutCount++;
+        }
       } else {
         return waitingTakers.push(taker);
       }
@@ -139,6 +129,32 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
         }
         return o;
       }
+    };
+    notifyTakers = function() {
+      var i, len, queue, results, taker;
+      alreadyWaitingToNotify = false;
+      queue = takersToNotify;
+      takersToNotify = [];
+      results = [];
+      for (i = 0, len = queue.length; i < len; i++) {
+        taker = queue[i];
+        results.push(notify(taker));
+      }
+      return results;
+    };
+    notify = function(taker) {
+      var name, resolvedNeeds;
+      resolvedNeeds = (function() {
+        var i, len, ref, results;
+        ref = taker.needs;
+        results = [];
+        for (i = 0, len = ref.length; i < len; i++) {
+          name = ref[i];
+          results.push(made[name]);
+        }
+        return results;
+      })();
+      return taker.callback.apply(null, resolvedNeeds);
     };
     addListener = function(eventName) {
       var handler;

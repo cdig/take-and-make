@@ -16,6 +16,8 @@ unless Take? or Make?
     
     made = {}
     waitingTakers = []
+    takersToNotify = []
+    alreadyWaitingToNotify = false
     alreadyChecking = false
     timeoutCount = 0
     clone = (o)-> if Object.assign? then Object.assign({}, o) else o
@@ -55,7 +57,7 @@ unless Take? or Make?
       made[name] = value
       checkWaitingTakers()
       value
-
+    
     
     checkWaitingTakers = ()->
       return if alreadyChecking # Prevent recursion from Make() calls inside notify()
@@ -76,12 +78,7 @@ unless Take? or Make?
     allNeedsAreMet = (needs)->
       return needs.every (name)-> made[name]?
     
-    
-    notify = (taker)->
-      resolvedNeeds = (made[name] for name in taker.needs)
-      taker.callback.apply(null, resolvedNeeds)
-    
-    
+
     resolve = (needs, callback)->
       # We always try to resolve both synchronously and asynchronously
       asynchronousResolve needs, callback if callback?
@@ -97,9 +94,11 @@ unless Take? or Make?
       taker = needs: needs, callback: callback
       
       if allNeedsAreMet needs
-        # Preserve asynchrony
-        setTimeout ()-> notify taker
-        timeoutCount++
+        takersToNotify.push taker
+        unless alreadyWaitingToNotify
+          alreadyWaitingToNotify = true
+          setTimeout notifyTakers # Preserve asynchrony
+          timeoutCount++
       else
         waitingTakers.push taker
     
@@ -112,6 +111,18 @@ unless Take? or Make?
         o[n] = made[n] for n in needs
         return o
     
+    
+    notifyTakers = ()->
+      alreadyWaitingToNotify = false
+      queue = takersToNotify
+      takersToNotify = []
+      notify taker for taker in queue
+
+    
+    notify = (taker)->
+      resolvedNeeds = (made[name] for name in taker.needs)
+      taker.callback.apply(null, resolvedNeeds)
+        
     
     addListener = (eventName)->
       window.addEventListener eventName, handler = (eventObject)->
