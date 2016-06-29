@@ -34,13 +34,11 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
       return resolve(needs, callback);
     };
     DebugTakeMake = function() {
-      var base, i, j, len, len1, need, ref, waiting;
-      ({
-        output: {
-          timeoutCount: timeoutCount,
-          unresolved: {}
-        }
-      });
+      var base, i, j, len, len1, need, output, ref, waiting;
+      output = {
+        timeoutCount: timeoutCount,
+        unresolved: {}
+      };
       for (i = 0, len = waitingTakers.length; i < len; i++) {
         waiting = waitingTakers[i];
         ref = waiting.needs;

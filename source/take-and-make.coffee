@@ -38,7 +38,7 @@ unless Take? or Make?
     
     
     DebugTakeMake = ()->
-      output:
+      output =
         timeoutCount: timeoutCount
         unresolved: {}
       for waiting in waitingTakers
