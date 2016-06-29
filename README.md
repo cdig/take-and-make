@@ -13,6 +13,7 @@ Somewhere in the dense thicket between module systems, dependency trees, injecto
 * Take & Make are no longer declared on the window
 * `"use strict";` at the top, on behalf of all code that follows
 * Debug outputs are cloned, to avoid mutation pains
+* Debug output includes a count of how many setTimeout() calls we make
 * Removed Angular support
 
 
