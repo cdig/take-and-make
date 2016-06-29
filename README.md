@@ -207,4 +207,4 @@ In the future, we'll need more advanced tools for code modularization and lazy l
 Take & Make give us enough to get by on until 2016, once ES6 modules become ubiquitous. They will do just fine for our needs until then, and we can avoid the clusterfuck of AMD, RequireJS, Webpack, CommonJS, NPM, JSPM, etc.
 
 ## License
-Copyright (c) 2014-2015 CD Industrial Group Inc., released under MIT license.
+Copyright (c) 2014-2016 CD Industrial Group Inc., released under MIT license.
