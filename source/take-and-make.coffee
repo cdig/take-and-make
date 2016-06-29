@@ -17,6 +17,7 @@ unless Take? or Make?
     made = {}
     waitingTakers = []
     alreadyChecking = false
+    timeoutCount = 0
     clone = (o)-> if Object.assign? then Object.assign({}, o) else o
     
     
@@ -37,13 +38,15 @@ unless Take? or Make?
     
     
     DebugTakeMake = ()->
-      unresolved = {}
+      output:
+        timeoutCount: timeoutCount
+        unresolved: {}
       for waiting in waitingTakers
         for need in waiting.needs
           unless made[need]?
-            unresolved[need] ?= 0
-            unresolved[need]++
-      return unresolved
+            output.unresolved[need] ?= 0
+            output.unresolved[need]++
+      return output
     
     
     register = (name, value)->
@@ -96,6 +99,7 @@ unless Take? or Make?
       if allNeedsAreMet needs
         # Preserve asynchrony
         setTimeout ()-> notify taker
+        timeoutCount++
       else
         waitingTakers.push taker
     

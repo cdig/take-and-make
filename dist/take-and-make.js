@@ -6,10 +6,11 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
   Make = null;
   DebugTakeMake = null;
   (function() {
-    var addListener, allNeedsAreMet, alreadyChecking, asynchronousResolve, checkWaitingTakers, clone, made, notify, register, resolve, synchronousResolve, waitingTakers;
+    var addListener, allNeedsAreMet, alreadyChecking, asynchronousResolve, checkWaitingTakers, clone, made, notify, register, resolve, synchronousResolve, timeoutCount, waitingTakers;
     made = {};
     waitingTakers = [];
     alreadyChecking = false;
+    timeoutCount = 0;
     clone = function(o) {
       if (Object.assign != null) {
         return Object.assign({}, o);
@@ -33,22 +34,27 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
       return resolve(needs, callback);
     };
     DebugTakeMake = function() {
-      var i, j, len, len1, need, ref, unresolved, waiting;
-      unresolved = {};
+      var base, i, j, len, len1, need, ref, waiting;
+      ({
+        output: {
+          timeoutCount: timeoutCount,
+          unresolved: {}
+        }
+      });
       for (i = 0, len = waitingTakers.length; i < len; i++) {
         waiting = waitingTakers[i];
         ref = waiting.needs;
         for (j = 0, len1 = ref.length; j < len1; j++) {
           need = ref[j];
           if (made[need] == null) {
-            if (unresolved[need] == null) {
-              unresolved[need] = 0;
+            if ((base = output.unresolved)[need] == null) {
+              base[need] = 0;
             }
-            unresolved[need]++;
+            output.unresolved[need]++;
           }
         }
       }
-      return unresolved;
+      return output;
     };
     register = function(name, value) {
       if (name === "") {
@@ -115,9 +121,10 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
         callback: callback
       };
       if (allNeedsAreMet(needs)) {
-        return setTimeout(function() {
+        setTimeout(function() {
           return notify(taker);
         });
+        return timeoutCount++;
       } else {
         return waitingTakers.push(taker);
       }
