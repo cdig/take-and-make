@@ -1,6 +1,9 @@
 (function() {
   (function() {
     var addListener, allNeedsAreMet, alreadyChecking, checkWaitingTakers, clone, made, notify, register, resolve, waitingTakers;
+    if ((window.Take != null) || (window.Make != null)) {
+      return;
+    }
     made = {};
     waitingTakers = [];
     alreadyChecking = false;

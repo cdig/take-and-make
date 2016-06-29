@@ -1,8 +1,13 @@
 do ()->
+  
+  # Bail if Take&Make is already running, or if something else is using our names
+  return if window.Take? or window.Make?
+  
   made = {}
   waitingTakers = []
   alreadyChecking = false
   clone = (o)-> if Object.assign? then Object.assign({}, o) else o
+
   
 # Public
   
