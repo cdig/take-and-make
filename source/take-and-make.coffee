@@ -1,3 +1,8 @@
+# Since this is typically the first bit of code included in our big compiled and
+# concatenated JS files, this is a great place to demand strictness. CoffeeScript
+# does not add strict on its own, but it will permit and enforce it.
+"use strict";
+
 do ()->
   
   # Bail if Take&Make is already running, or if something else is using our names
