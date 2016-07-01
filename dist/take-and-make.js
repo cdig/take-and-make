@@ -110,7 +110,7 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
       };
       if (allNeedsAreMet(needs)) {
         takersToNotify.push(taker);
-        timeoutNeededCount++;
+        timeoutsNeeded++;
         if (!alreadyWaitingToNotify) {
           alreadyWaitingToNotify = true;
           setTimeout(notifyTakers);

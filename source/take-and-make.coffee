@@ -97,7 +97,7 @@ unless Take? or Make?
       
       if allNeedsAreMet needs
         takersToNotify.push taker
-        timeoutNeededCount++
+        timeoutsNeeded++
         unless alreadyWaitingToNotify
           alreadyWaitingToNotify = true
           setTimeout notifyTakers # Preserve asynchrony
