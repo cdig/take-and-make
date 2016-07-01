@@ -19,7 +19,8 @@ unless Take? or Make?
     takersToNotify = []
     alreadyWaitingToNotify = false
     alreadyChecking = false
-    timeoutCount = 0
+    timeoutsNeeded = 0
+    timeoutsUsed = 0
     clone = (o)-> if Object.assign? then Object.assign({}, o) else o
     
     
@@ -41,7 +42,8 @@ unless Take? or Make?
     
     DebugTakeMake = ()->
       output =
-        timeoutCount: timeoutCount
+        timeoutsNeeded: timeoutsNeeded
+        timeoutsUsed: timeoutsUsed
         unresolved: {}
       for waiting in waitingTakers
         for need in waiting.needs
@@ -95,10 +97,11 @@ unless Take? or Make?
       
       if allNeedsAreMet needs
         takersToNotify.push taker
+        timeoutNeededCount++
         unless alreadyWaitingToNotify
           alreadyWaitingToNotify = true
           setTimeout notifyTakers # Preserve asynchrony
-          timeoutCount++
+          timeoutsUsed++
       else
         waitingTakers.push taker
     
