@@ -6,13 +6,14 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
   Make = null;
   DebugTakeMake = null;
   (function() {
-    var addListener, allNeedsAreMet, alreadyChecking, alreadyWaitingToNotify, asynchronousResolve, checkWaitingTakers, clone, made, notify, notifyTakers, register, resolve, synchronousResolve, takersToNotify, timeoutCount, waitingTakers;
+    var addListener, allNeedsAreMet, alreadyChecking, alreadyWaitingToNotify, asynchronousResolve, checkWaitingTakers, clone, made, notify, notifyTakers, register, resolve, synchronousResolve, takersToNotify, timeoutsNeeded, timeoutsUsed, waitingTakers;
     made = {};
     waitingTakers = [];
     takersToNotify = [];
     alreadyWaitingToNotify = false;
     alreadyChecking = false;
-    timeoutCount = 0;
+    timeoutsNeeded = 0;
+    timeoutsUsed = 0;
     clone = function(o) {
       if (Object.assign != null) {
         return Object.assign({}, o);
@@ -38,7 +39,8 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
     DebugTakeMake = function() {
       var base, i, j, len, len1, need, output, ref, waiting;
       output = {
-        timeoutCount: timeoutCount,
+        timeoutsNeeded: timeoutsNeeded,
+        timeoutsUsed: timeoutsUsed,
         unresolved: {}
       };
       for (i = 0, len = waitingTakers.length; i < len; i++) {
@@ -108,10 +110,11 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
       };
       if (allNeedsAreMet(needs)) {
         takersToNotify.push(taker);
+        timeoutNeededCount++;
         if (!alreadyWaitingToNotify) {
           alreadyWaitingToNotify = true;
           setTimeout(notifyTakers);
-          return timeoutCount++;
+          return timeoutsUsed++;
         }
       } else {
         return waitingTakers.push(taker);
