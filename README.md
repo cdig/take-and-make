@@ -6,16 +6,8 @@ Somewhere in the dense thicket between module systems, dependency trees, injecto
 `Take()` and `Make()` are bare globals. Make sure this code is loaded before anything that uses them.
 
 
-## Changes In v3
-* Improved performance by batching setTimeout calls
-* Primitive support for namespacing
-* Take & Make now return helpful stuff in all use cases
-* Allow `Take ""` to work the same as `Take []`
-* Take & Make are no longer declared on the window
-* `"use strict";` at the top, on behalf of all code that follows
-* Debug outputs are cloned, to avoid mutation pains
-* Debug output includes a count of how many setTimeout() calls we make
-* Removed Angular support
+## Changes In v4
+* None yet
 
 
 ## Make
@@ -211,4 +203,4 @@ Take & Make give us enough to get by on until 2017, once ES6 modules become ubiq
 
 
 ## License
-Copyright (c) 2014-2016 CD Industrial Group Inc., released under MIT license.
+Copyright (c) 2014-2017 CD Industrial Group Inc., released under MIT license.
