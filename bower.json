@@ -1,0 +1,14 @@
+{
+  "name": "take-and-make",
+  "version": 4.0.0,
+  "description": "Just the right amount of dependency resolution service™",
+  "license": "MIT",
+  "private": true,
+  "main": [
+    "dist/take-and-make.js"
+  ],
+  "ignore": [
+    "**/*",
+    "!dist/**/*"
+  ]
+}
