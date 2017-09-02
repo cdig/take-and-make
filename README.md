@@ -5,11 +5,6 @@ Somewhere in the dense thicket between module systems, dependency trees, injecto
 ## Quick Start
 `Take()` and `Make()` are bare globals. Make sure this code is loaded before anything that uses them.
 
-
-## Changes In v4
-* None yet
-
-
 ## Make
 `Make(name:String, value:*)` **registers** a **value** for a **name**.
  
