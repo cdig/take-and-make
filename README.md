@@ -9,7 +9,7 @@ Somewhere in the dense thicket between module systems, dependency trees, injecto
 `Make(name:String, value:*)` **registers** a **value** for a **name**.
  
 ```coffee
-Make UniversalAnswer", 42
+Make "UniversalAnswer", 42
 
 Make "ScaryStory", (subject)->
   return "Once upon a time, #{subject} walked into the woods. #{subject} was eaten by a giant spider. The end. (OR IS IT?)"
