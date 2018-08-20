@@ -209,9 +209,8 @@ Take "B", (B)->
 ```
 
 ## Building
-To compile from source...
 ```bash
-coffee --bare -o dist/take-and-make.js -c source/take-and-make.coffee
+npm run build
 ```
 
 ## License
