@@ -1,21 +1,22 @@
 # Take & Make
-Somewhere in the dense thicket between module systems, dependency trees, injectors, resolvers, service discovery, and grossly abusing events because you don't have any of the former, you'll find **Take & Make**. They're wonderful, with only the slightest whiff of glue.
+Somewhere in the dense thicket of module systems, dependency graphs, injectors, registries, service discovery, and grossly abusing events because you don't like any of the former, you'll find **Take & Make**. They're wonderful, with only the slightest whiff of glue.
 
 
 ## Quick Start
-`Take()` and `Make()` are bare globals. Make sure this code is loaded before anything that uses them.
+`Take` and `Make` are bare globals. Be sure that `take-and-make.js` is loaded before anything that uses them.
+
 
 ## Make
-`Make(name:String, value:*)` **registers** a **value** for a **name**.
+`Make` **registers** a **value** for a **name**.
 
 ```coffee
 Make "UniversalAnswer", 42
 
 Make "ScaryStory", (subject)->
-  return "Once upon a time, #{subject} walked into the woods. #{subject} was eaten by a giant spider. The end. (OR IS IT?)"
+  "Once upon a time, #{subject} walked into the woods. #{subject} was eaten by a giant spider. The end."
 ```
 
-The value can be of any type, and is optional. If you don't give a value, you're registering *the fact that something happened*. We call this a **one-time event**.
+The value can be of any type, and is optional. If you don't provide a value, you're registering *the fact that something has happened*. We call this a **one-time event**.
 
 ```coffee
 Make "Ready"
@@ -28,56 +29,75 @@ Make "Six", 6
 Make "Six", "VI" # Throws an error
 ```
 
-Make will return the value you provide, for convenience.
+The name can be any valid string. Also, `Make` will return the value you provide, for convenience.
 
 ```coffee
-console.log Make "Weird Times With JavaScript", {1}[1] # What does this even....?
+six = Make "Six", 1 + 2 + 3
+console.log six # 6
 ```
 
 
 ## Take
-`Take(names:Array, callback:Function)` gives you back values registered with `Make()`.
+`Take` gives you back values registered with `Make`.
+
+Give `Take` one or more names, and a callback function with an argument for each name.
+
+```coffee
+Take "Six", (Six)->
+  console.log Six # 6
+```
+
 Once the requested names have all been registered, your callback function is called with the named values as arguments.
 
 ```coffee
 Take ["ScaryStory", "UniversalAnswer"], (ScaryStory, UniversalAnswer)->
-  console.log UniversalAnswer # Logs: 42
-  console.log ScaryStory UniversalAnswer # Logs: Once upon a time, 42 walked into the woods. 42 was eaten by a giant spider. The end. (OR IS IT?)
+  console.log ScaryStory UniversalAnswer # Once upon a time, 42 walked into the woods. 42 was eaten by a giant spider. The end.
 ```
 
-Pro tip: if there's only one name, you can use a string instead of an array.
-Oh, and if the name you're requesting is a *one-time event*,
-then the value will just be the same as the name. It's idiomatic to place these names last in the array, and then just omit them from the function parameters.
+This writing-the-names-twice redundancy might seem annoying, but it gives you a handful of niceties:
+* Your names don't have to be valid JS identifiers, and you can use a different name locally than globally.
+    ```coffee
+    Take ["🤯","Super Cool School"], (ExplodingHead, School)->
+    ```
+* You can use destructuring on the function args.
+    ```coffee
+    Take "Position", ({x:x, y:y})->
+    ```
+* Your code will survive minification with aplomb.
+    ```js
+    Take("q",function(Six){console.log(Six)});)
+    ```
+
+If the name you're requesting is a *one-time event*, then the value will just be the same as the name.
+It's idiomatic to place these names last in the array, and then just omit them from the function parameters.
 
 ```coffee
 # "Ready" is a one-time event, so we can just omit it from the function arguments.
 Take ["UniversalAnswer", "Ready"], (UniversalAnswer)->
-  console.log "I'm #{UniversalAnswer} years old and I'm ready for action!" # Logs: "I'm 42 years old and I'm ready for action!"
+  console.log "I'm #{UniversalAnswer - 33} years old and I'm ready for action!" # "I'm 9 years old and I'm ready for action!"
 
-# Only one name? Use a string instead of an array!
+# It's common to use one-time events like this:
 Take "Ready", ()->
 
-  # You can name the callback arguments whatever you want. This gives nice "import as" behaviour.
-  Take "TheFuture", (fuuuuture)-> fuuuuture() # Logs: "We're living in the future!"
+  # Of course, you can call Take() before calling Make()
+  Take "In The Future", (theFutureIsNow)-> theFutureIsNow() # "We're living in the future!"
+  Make "In The Future", ()-> console.log "We're living in the future!"
 
-  # You can call Take() before calling Make()
-  Make "TheFuture", ()-> console.log "We're living in the future!"
-
-# Want a placeholder? You got it!
+# It's also common to do this:
 Take [], ()-> console.log "This code runs on the next turn of the event loop".
 Take "", ()-> console.log "This is exactly the same as the above."
 ```
 
 
 ## Standard One-Time Events
-Out-of-the-box, we listen for a bunch of standard events on the `window`, and call Make() when they fire for the first time. That way, you can use Take() to wait for common events like the page being loaded, or the very first mouse click (possibly useful for WebAudioAPI, or debugging).
+Out-of-the-box, we listen for a bunch of standard events on the `window`, and call `Make` when they fire for the first time. That way, you can use `Take` to wait for common events like the page being loaded, or the very first mouse click (useful for WebAudioAPI, or debugging).
 
 ```coffee
 Take "load", ()->
   alert "The page has finished loading. Aren't you glad I told you?"
 ```
 
-The current events we wrap are:
+The current events we offer are:
 
 * beforeunload
 * click
@@ -89,38 +109,37 @@ The value associated with these events is the event object (whenever possible �
 
 ```coffee
 Take "click", (click)->
-  alert("The page was clicked at #{click.clientX}, #{click.clientY}")
+  alert "The page was clicked at #{click.clientX}, #{click.clientY}"
 ```
 
 
 ## Sync or Async?
-
-Make is synchronous. Take can be used synchronously or asynchronously. When you give Take a callback, that callback is never called synchronously, even if all of the values it requests on have already been registered.
+`Make` is synchronous. `Take` can be used synchronously or asynchronously. When you give `Take` a callback, that callback is *always* called asynchronously, even if all of the values it requests on have already been registered. `Take` callbacks are run in the order they're received.
 
 ```coffee
-# Asynchronous Take, before Make — doesn't log yet
+# Asynchronous Take, before Make — doesn't log yet
 Take "Me", (Me)-> console.log "Late"
 
-# Synchronous Take, before Make — immediately logs undefined
+# Synchronous Take, before Make — immediately logs undefined
 console.log Take "Me"
 
-# Mixed Take, before Make — immediately logs undefined, callback doesn't run yet
+# Mixed Take, before Make — immediately logs undefined, callback doesn't run yet
 console.log Take "Me", (Me)-> console.log "Later"
 
-# Synchronous Make — immediately causes our two Take callbacks above to log "Late" and "Later", in that order
+# Synchronous Make — immediately causes our two Take callbacks above to log "Late" and "Later", in that order
 Make "Me", "Happy"
 
-# Asynchronous Take, after Make — to preserve asynchrony, waits until the next turn of the event loop then logs "Super Late"
+# Asynchronous Take, after Make — to preserve asynchrony, waits until the next turn of the event loop then logs "Super Late"
 Take "Me", (Me)-> console.log "Super Late"
 
-# Synchronous Take, after Make — immediately logs "Happy"
+# Synchronous Take, after Make — immediately logs "Happy"
 console.log Take "Me"
 
-# Mixed Take, after Make — immediately logs "Happy", waits until the next tick, then logs "Finally"
+# Mixed Take, after Make — immediately logs "Happy", waits until the next tick, then logs "Finally"
 console.log Take "Me", (Me)-> console.log "Finally"
 ```
 
-When you call Make, it _might_ immediately trigger some faraway Take to be resolved. In that case, the Take callback will run _before_ the code immediately following your Make. Thus, if you need to do any initialization before your Make'd thing is ready-to-go, then for goodness sakes do that stuff before you call Make.
+When you call `Make`, it _might_ immediately trigger some faraway `Take` to be resolved. In that case, the `Take` callback will run _before_ the code immediately following your `Make`. Thus, if you need to do any initialization before your `Make`'d thing is ready-to-go, then for goodness sakes do that stuff before you call `Make`.
 
 ```coffee
 Take "Sys", (Sys)-> Sys()
@@ -128,10 +147,10 @@ Take "Sys", (Sys)-> Sys.tem()
 
 Sys = ()-> console.log "Sys call"
 
-# If we called Make("Sys", Sys) now,
+# Make is synchronous.
+# So if we called Make("Sys", Sys) now,
 # our first Take callback would log "Sys call"
-# and our second Take callback would error because Sys.tem is undefined,
-# because Make() is synchronous and immediately runs all matching Takes.
+# and our second Take callback would error because Sys.tem is undefined.
 
 Sys.tem = ()-> console.log "tem call"
 
@@ -140,8 +159,8 @@ Make "Sys", Sys
 # synchronously logs "tem call"
 ```
 
-When you use Take synchronously, you can also specify multiple needs.
-In that case, the return value will be an object mapping the needed names to their values.
+When you use `Take` synchronously, you can also specify multiple names.
+In that case, the return value will be an object mapping the names to their values.
 Any values that haven't yet been registered will be `undefined`.
 
 ```coffee
@@ -157,13 +176,13 @@ console.log result.C # undefined
 
 
 ## Debugging
-Having trouble getting a Take() to resolve?
+Having trouble getting a `Take` to resolve?
 Getting lost in the dependency forest?
 We've got the debugging tool you need!
 
 Open your browser console, and run `DebugTakeMake()`.
 It will return an object with all of the unresolved names as properties,
-and how many different Take() calls are waiting on them as values.
+and how many different `Take` calls are waiting on them as values.
 Very, very helpful.
 
 In the console, you can also just call `Make()` to see the list of all registered values,
@@ -173,7 +192,7 @@ so you're probably better off just sticking with that.
 
 
 ## Words Of Warning
-Don't you dare create any circular dependencies. I haven't read those papers, so sod off.
+Don't you dare create any circular dependencies.
 
 ```coffee
 # Don't do this:
@@ -189,5 +208,11 @@ Take "B", (B)->
 # If you do this, Take("A") and Take("B") will never resolve.
 ```
 
+## Building
+To compile from source...
+```bash
+coffee --bare -o dist/take-and-make.js -c source/take-and-make.coffee
+```
+
 ## License
-Copyright (c) 2014-2017 CD Industrial Group Inc., released under MIT license.
+Copyright (c) 2014-2018 CD Industrial Group Inc., released under MIT license.
