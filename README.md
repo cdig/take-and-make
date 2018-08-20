@@ -82,11 +82,18 @@ Take "Ready", ()->
   # Of course, you can call Take() before calling Make()
   Take "In The Future", (theFutureIsNow)-> theFutureIsNow() # "We're living in the future!"
   Make "In The Future", ()-> console.log "We're living in the future!"
+```
 
-# It's also common to do this:
+You can also call `Take` when an empty array and callback. This gives you two niceties:
+1. It creates a new private namespace inside the callback.
+2. It runs the callback on the next turn of the event loop, which means anything else declared in the outer scope should be parsed and ready to go, even if it's a forward reference.
+
+```
 Take [], ()-> console.log "This code runs on the next turn of the event loop".
 Take "", ()-> console.log "This is exactly the same as the above."
 ```
+
+It's overwhelmingly common to use `Take [], ()->` at the very top of a file, and nest everything inside it. You get the above benefits, plus it's easy to add dependencies if you need them. Throw a `Make "Name", API` at the bottom of the file (where the API is a function or object), and you have a super nice pattern for creating tidy modules / components / systems / classes / bags-of-functions.
 
 
 ## Standard One-Time Events
