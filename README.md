@@ -7,7 +7,7 @@ Somewhere in the dense thicket between module systems, dependency trees, injecto
 
 ## Make
 `Make(name:String, value:*)` **registers** a **value** for a **name**.
- 
+
 ```coffee
 Make "UniversalAnswer", 42
 
@@ -56,13 +56,13 @@ Take ["UniversalAnswer", "Ready"], (UniversalAnswer)->
 
 # Only one name? Use a string instead of an array!
 Take "Ready", ()->
-  
+
   # You can name the callback arguments whatever you want. This gives nice "import as" behaviour.
   Take "TheFuture", (fuuuuture)-> fuuuuture() # Logs: "We're living in the future!"
-  
+
   # You can call Take() before calling Make()
   Make "TheFuture", ()-> console.log "We're living in the future!"
-  
+
 # Want a placeholder? You got it!
 Take [], ()-> console.log "This code runs on the next turn of the event loop".
 Take "", ()-> console.log "This is exactly the same as the above."
@@ -188,14 +188,6 @@ Take "B", (B)->
 
 # If you do this, Take("A") and Take("B") will never resolve.
 ```
-
-
-## Future Plans
-Take & Make are a temporary solution.
-They solve the 95% of the problem that must be solved, and they avoid the 5% that'd turn them into a huge heap of code and complication.
-In the future, we'll need more advanced tools for code modularization and lazy loading and compilation and, most importantly, dead code elimination.
-Take & Make give us enough to get by on until 2017, once ES6 modules become ubiquitous. They will do just fine for our needs until then, and we can avoid the clusterfuck of AMD, RequireJS, Webpack, CommonJS, NPM, JSPM, etc.
-
 
 ## License
 Copyright (c) 2014-2017 CD Industrial Group Inc., released under MIT license.
