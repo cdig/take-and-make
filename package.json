@@ -4,10 +4,10 @@
   "description": "Just the right amount of dependency resolution service™",
   "main": "dist/take-and-make.js",
   "scripts": {
-    "build": "coffee --bare -o dist/take-and-make.js -c source/take-and-make.coffee"
+    "build": "coffee --bare -o dist -c source/take-and-make.coffee"
   },
   "devDependencies": {
-    "coffeescript": "latest"
+    "coffee-script": "latest"
   },
   "license": "MIT",
   "private": true
