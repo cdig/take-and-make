@@ -32,8 +32,8 @@ Make "Six", "VI" # Throws an error
 The name can be any valid string. Also, `Make` will return the value you provide, for convenience.
 
 ```coffee
-six = Make "Six", 1 + 2 + 3
-console.log six # 6
+seven = Make "Six Plus One", 6 + 1
+console.log seven # 7
 ```
 
 
