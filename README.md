@@ -78,14 +78,19 @@ Take ["UniversalAnswer", "Ready"], (UniversalAnswer)->
 
 # It's common to use one-time events like this:
 Take "Ready", ()->
+  # I'm ready
 
-  # Of course, you can call Take() before calling Make()
-  Take "In The Future", (theFutureIsNow)-> theFutureIsNow() # "We're living in the future!"
-  Make "In The Future", ()-> console.log "We're living in the future!"
+# Of course, you can call Take before calling Make
+Take "In The Future", (theFutureIsNow)->
+  theFutureIsNow()
+
+# As soon as this finishes, the above Take "In The Future" callback will run.
+Make "In The Future", ()->
+  console.log "We're living in the future!"
 ```
 
-You can also call `Take` when an empty array and callback. This gives you two niceties:
-1. It creates a new private namespace inside the callback.
+You can also just call `Take` without asking for anything. This gives you two niceties:
+1. It creates a new private namespace inside the callback, like an IIFE.
 2. It runs the callback on the next turn of the event loop, which means anything else declared in the outer scope should be parsed and ready to go, even if it's a forward reference.
 
 ```
