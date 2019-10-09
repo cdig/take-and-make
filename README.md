@@ -47,7 +47,7 @@ Take "Six", (Six)->
   console.log Six # 6
 ```
 
-Once the requested names have all been registered, your callback function is called with the named values as arguments.
+Once the requested names have all been registered with Make, your callback function is called with the corresponding values as arguments.
 
 ```coffee
 Take ["ScaryStory", "UniversalAnswer"], (ScaryStory, UniversalAnswer)->
@@ -65,7 +65,7 @@ This writing-the-names-twice redundancy might seem annoying, but it gives you a 
     ```
 * Your code will survive minification with aplomb.
     ```js
-    Take("q",function(Six){console.log(Six)});)
+    Take("Six",function(q){console.log(q)});
     ```
 
 If the name you're requesting is a *one-time event*, then the value will just be the same as the name.
