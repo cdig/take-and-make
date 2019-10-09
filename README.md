@@ -225,5 +225,8 @@ Take "B", (B)->
 npm run build
 ```
 
+## Example
+Take & Make are used to manage the module dependencies and load-time behaviour for all CDIG JavaScript/CoffeeScript projects. For example, have a look at the main entrypoint for [SVGA](https://github.com/cdig/svga/blob/v4-1/source/core/main.coffee).
+
 ## License
-Copyright (c) 2014-2018 CD Industrial Group Inc., released under MIT license.
+Copyright (c) 2014-2019 CD Industrial Group Inc., released under MIT license.
