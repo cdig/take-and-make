@@ -7,7 +7,7 @@
     "build": "coffee --bare -o dist -c source/take-and-make.coffee"
   },
   "devDependencies": {
-    "coffee-script": "latest"
+    "coffeescript": "latest"
   },
   "license": "MIT",
   "private": true
