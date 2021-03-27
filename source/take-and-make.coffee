@@ -19,8 +19,8 @@ unless Take? or Make?
     takersToNotify = []
     alreadyWaitingToNotify = false
     alreadyChecking = false
-    timeoutsNeeded = 0
-    timeoutsUsed = 0
+    microtasksNeeded = 0
+    microtasksUsed = 0
 
     Make = (name, value = name)->
       # Debug — call Make() in the console to see what we've regstered
@@ -40,8 +40,8 @@ unless Take? or Make?
 
     DebugTakeMake = ()->
       output =
-        timeoutsNeeded: timeoutsNeeded
-        timeoutsUsed: timeoutsUsed
+        microtasksNeeded: microtasksNeeded
+        microtasksUsed: microtasksUsed
         unresolved: {}
       for waiting in waitingTakers
         for need in waiting.needs
@@ -95,11 +95,11 @@ unless Take? or Make?
 
       if allNeedsAreMet needs
         takersToNotify.push taker
-        timeoutsNeeded++
+        microtasksNeeded++
         unless alreadyWaitingToNotify
           alreadyWaitingToNotify = true
-          setTimeout notifyTakers # Preserve asynchrony
-          timeoutsUsed++
+          queueMicrotask notifyTakers # Preserve asynchrony
+          microtasksUsed++
       else
         waitingTakers.push taker
 
@@ -115,9 +115,9 @@ unless Take? or Make?
 
     notifyTakers = ()->
       alreadyWaitingToNotify = false
-      queue = takersToNotify
+      takers = takersToNotify
       takersToNotify = []
-      notify taker for taker in queue
+      notify taker for taker in takers
       null
 
 
