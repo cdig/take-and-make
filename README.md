@@ -151,7 +151,7 @@ console.log Take "Me"
 console.log Take "Me", (Me)-> console.log "Finally"
 ```
 
-When you call `Make`, it _might_ immediately trigger some faraway `Take` to be resolved. In that case, the `Take` callback will run _before_ the code immediately following your `Make`. Thus, if you need to do any initialization before your `Make`'d thing is ready-to-go, then for goodness sakes do that stuff before you call `Make`.
+When you call `Make`, it _might_ immediately trigger some faraway `Take` to be resolved. In that case, the `Take` callback will run _before_ the code immediately following your `Make`. Thus, if you need to do any initialization before your `Make`'d thing is ready-to-go, then for goodness sakes do that stuff before you call `Make`. (Though [see below](#modern-async) for another option.)
 
 ```coffee
 Take "Sys", (Sys)-> Sys()
@@ -184,6 +184,29 @@ result = Take ["A", "B", "C"]
 console.log result.A # "A"
 console.log result.B # 2
 console.log result.C # undefined
+```
+
+
+## Modern Async
+
+There's a special version of Take that returns a promise, useful for async/await.
+Like the synchronous version of Take, it'll resolve the promise with either a single value or an object of values.
+
+```coffee
+A = await Take.async "A"
+{B, C} = await Take.async ["B", "C"]
+```
+
+Remember when we said Make was synchronous? Yeah, that was a lie. There's also an async version.
+This will defer committing the value (and resolving Takes) until the end of the current task.
+
+```coffee
+Make.async "Wait For It", "Patience, my young apprentice"
+console.log Take "Wait For It" # undefined, because Make.async doesn't commit until later
+
+# Compare with:
+Make "It Is Time", "NOW"
+console.log Take "It Is Time" # "NOW", because Make synchronously committed the value
 ```
 
 
@@ -222,11 +245,8 @@ Take "B", (B)->
 
 ## Building
 ```bash
-npm run build
+yarn build
 ```
 
 ## Example
-Take & Make are used to manage the module dependencies and load-time behaviour for all CDIG JavaScript/CoffeeScript projects. For example, have a look at the main entrypoint for [SVGA](https://github.com/cdig/svga/blob/v4-1/source/core/main.coffee).
-
-## License
-Copyright (c) 2014-2019 CD Industrial Group Inc., released under MIT license.
+Take & Make are used to manage the module dependencies and load-time behaviour for all CDIG JavaScript/CoffeeScript projects. For example, have a look at the main entry point for [SVGA](https://github.com/cdig/svga/blob/v4-1/source/core/main.coffee). They've been run tens (maybe hundreds by now) of millions of times in production.

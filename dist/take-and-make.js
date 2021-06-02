@@ -12,14 +12,14 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
   Make = null;
   DebugTakeMake = null;
   (function() {
-    var addListener, allNeedsAreMet, alreadyChecking, alreadyWaitingToNotify, asynchronousResolve, checkWaitingTakers, clone, made, notify, notifyTakers, register, resolve, synchronousResolve, takersToNotify, timeoutsNeeded, timeoutsUsed, waitingTakers;
+    var addListener, allNeedsAreMet, alreadyChecking, alreadyWaitingToNotify, asynchronousResolve, checkWaitingTakers, clone, made, microtasksNeeded, microtasksUsed, notify, notifyTakers, register, resolve, synchronousResolve, takersToNotify, waitingTakers;
     made = {};
     waitingTakers = [];
     takersToNotify = [];
     alreadyWaitingToNotify = false;
     alreadyChecking = false;
-    timeoutsNeeded = 0;
-    timeoutsUsed = 0;
+    microtasksNeeded = 0;
+    microtasksUsed = 0;
     Make = function(name, value = name) {
       if (name == null) {
         // Debug — call Make() in the console to see what we've regstered
@@ -36,11 +36,26 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
       // Synchronous and asynchronous resolve, returns value or object of values
       return resolve(needs, callback);
     };
+    // A variation of Make that defers committing the value
+    Make.async = function(name, value = name) {
+      return queueMicrotask(function() {
+        return Make(name, value);
+      });
+    };
+    // A variation of Take that returns a promise
+    Take.async = function(needs) {
+      return new Promise(function(res) {
+        return Take(needs, function() {
+          // Resolve the promise with a value or object of values
+          return res(synchronousResolve(needs));
+        });
+      });
+    };
     DebugTakeMake = function() {
       var base, i, j, len, len1, need, output, ref, waiting;
       output = {
-        timeoutsNeeded: timeoutsNeeded,
-        timeoutsUsed: timeoutsUsed,
+        microtasksNeeded: microtasksNeeded,
+        microtasksUsed: microtasksUsed,
         unresolved: {}
       };
       for (i = 0, len = waitingTakers.length; i < len; i++) {
@@ -113,11 +128,11 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
       };
       if (allNeedsAreMet(needs)) {
         takersToNotify.push(taker);
-        timeoutsNeeded++;
+        microtasksNeeded++;
         if (!alreadyWaitingToNotify) {
           alreadyWaitingToNotify = true;
-          setTimeout(notifyTakers); // Preserve asynchrony
-          return timeoutsUsed++;
+          queueMicrotask(notifyTakers); // Preserve asynchrony
+          return microtasksUsed++;
         }
       } else {
         return waitingTakers.push(taker);
@@ -137,12 +152,12 @@ if (!((typeof Take !== "undefined" && Take !== null) || (typeof Make !== "undefi
       }
     };
     notifyTakers = function() {
-      var i, len, queue, taker;
+      var i, len, taker, takers;
       alreadyWaitingToNotify = false;
-      queue = takersToNotify;
+      takers = takersToNotify;
       takersToNotify = [];
-      for (i = 0, len = queue.length; i < len; i++) {
-        taker = queue[i];
+      for (i = 0, len = takers.length; i < len; i++) {
+        taker = takers[i];
         notify(taker);
       }
       return null;

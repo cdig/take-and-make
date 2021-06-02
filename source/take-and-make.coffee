@@ -38,6 +38,20 @@ unless Take? or Make?
       resolve needs, callback
 
 
+    # A variation of Make that defers committing the value
+    Make.async = (name, value = name)->
+      queueMicrotask ()->
+        Make name, value
+
+
+    # A variation of Take that returns a promise
+    Take.async = (needs)->
+      new Promise (res)->
+        Take needs, ()->
+          # Resolve the promise with a value or object of values
+          res synchronousResolve needs
+
+
     DebugTakeMake = ()->
       output =
         microtasksNeeded: microtasksNeeded
